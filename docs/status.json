@@ -1,18 +1,18 @@
 {
-  "generated": "2026-09-12T20:57:18.436Z",
+  "generated": "2026-09-12T22:52:33.387Z",
   "monitors": [
     {
       "slug": "bpcf",
       "name": "BPCF",
       "url": "https://www.bpcf.nl/",
-      "ok": true,
-      "code": 200,
-      "ms": 913,
+      "ok": false,
+      "code": 0,
+      "ms": 254,
       "slow": false,
-      "reason": null,
+      "reason": "ETIMEDOUT",
       "flaky": false,
-      "since": "2026-09-12T16:30:36.702Z",
-      "checkedAt": "2026-09-12T20:57:18.436Z",
+      "since": "2026-09-12T22:52:33.387Z",
+      "checkedAt": "2026-09-12T22:52:33.387Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 60,
@@ -20,9 +20,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 80,
-        "d7": 80,
-        "d30": 80
+        "d1": 66.67,
+        "d7": 66.67,
+        "d30": 66.67
       }
     },
     {
@@ -31,12 +31,12 @@
       "url": "https://www.overlastvanwespen.nl/",
       "ok": false,
       "code": 0,
-      "ms": 395,
+      "ms": 404,
       "slow": false,
       "reason": "DEPTH_ZERO_SELF_SIGNED_CERT",
       "flaky": false,
       "since": "2026-09-12T10:29:18.271Z",
-      "checkedAt": "2026-09-12T20:57:18.436Z",
+      "checkedAt": "2026-09-12T22:52:33.387Z",
       "cert": null,
       "certAlertedOn": null,
       "uptime": {
@@ -49,14 +49,14 @@
       "slug": "je-grote-dag",
       "name": "Je Grote Dag",
       "url": "https://www.jegrotedag.nl/",
-      "ok": true,
-      "code": 200,
-      "ms": 771,
+      "ok": false,
+      "code": 0,
+      "ms": 253,
       "slow": false,
-      "reason": null,
+      "reason": "ETIMEDOUT",
       "flaky": false,
-      "since": "2026-09-12T16:30:36.702Z",
-      "checkedAt": "2026-09-12T20:57:18.436Z",
+      "since": "2026-09-12T22:52:33.387Z",
+      "checkedAt": "2026-09-12T22:52:33.387Z",
       "cert": {
         "validTo": "2026-10-31",
         "daysLeft": 48,
@@ -64,9 +64,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 80,
-        "d7": 80,
-        "d30": 80
+        "d1": 66.67,
+        "d7": 66.67,
+        "d30": 66.67
       }
     }
   ]
