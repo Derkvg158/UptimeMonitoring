@@ -1,0 +1,68 @@
+name: Uptime check
+
+on:
+  schedule:
+    # Elke 5 minuten. GitHub houdt zich hier los aan: in de praktijk zit er
+    # vaak 5-15 minuten tussen de runs. Voor een strakkere interval heb je
+    # een betaalde dienst nodig.
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Sites controleren
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/check.mjs
+
+      - name: Resultaten vastleggen
+        run: |
+          git config user.name "uptime-bot"
+          git config user.email "uptime-bot@users.noreply.github.com"
+          git add docs/
+          git diff --quiet --staged || git commit -m "status $(date -u +'%Y-%m-%d %H:%M')"
+          git pull --rebase --autostash
+          git push
+
+      - name: Melding klaarzetten
+        id: alert
+        run: |
+          if [ -f alert.txt ]; then
+            echo "send=true" >> "$GITHUB_OUTPUT"
+            echo "subject=$(head -n 1 alert.txt)" >> "$GITHUB_OUTPUT"
+            {
+              echo "body<<EOF"
+              tail -n +3 alert.txt
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: E-mail versturen
+        if: steps.alert.outputs.send == 'true'
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.MAIL_HOST }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USER }}
+          password: ${{ secrets.MAIL_PASS }}
+          from: Uptime monitor <${{ secrets.MAIL_USER }}>
+          to: ${{ secrets.MAIL_TO }}
+          subject: ${{ steps.alert.outputs.subject }}
+          body: ${{ steps.alert.outputs.body }}

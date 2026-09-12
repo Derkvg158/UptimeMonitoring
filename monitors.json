@@ -1,0 +1,20 @@
+{
+  "title": "Statusoverzicht",
+  "monitors": [
+    {
+      "name": "BPCF",
+      "url": "https://www.bpcf.nl/",
+      "mustNotContain": ["Fatal error", "Database connection"]
+    },
+    {
+      "name": "Overlast van wespen",
+      "url": "https://www.overlastvanwespen.nl/",
+      "mustNotContain": ["Fatal error"]
+    },
+    {
+      "name": "Je Grote Dag",
+      "url": "https://www.jegrotedag.nl/",
+      "mustNotContain": ["Fatal error", "An unexpected error occurred"]
+    }
+  ]
+}

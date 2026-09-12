@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Status van mijn websites</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #eef1f0;
+    --panel: #ffffff;
+    --ink: #1d2a2b;
+    --muted: #6c7c7b;
+    --rule: #dde3e1;
+    --ok: #2e7d5b;
+    --down: #b3261e;
+    --warn: #b3720d;
+    --idle: #cfd8d6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 32px 20px 64px;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+  main { max-width: 760px; margin: 0 auto; }
+
+  .verdict { margin-bottom: 28px; }
+  .verdict h1 {
+    margin: 0;
+    font-size: clamp(28px, 7vw, 42px);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  .verdict p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+
+  .board {
+    background: var(--panel);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+  }
+  .site { padding: 18px 20px; border-top: 1px solid var(--rule); }
+  .site:first-child { border-top: 0; }
+
+  .head { display: flex; align-items: baseline; gap: 10px; }
+  .dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--idle); flex: none;
+    align-self: center;
+  }
+  .dot.ok { background: var(--ok); }
+  .dot.down { background: var(--down); }
+  .dot.warn { background: var(--warn); }
+  .name { font-weight: 600; }
+  .name a { color: inherit; text-decoration: none; }
+  .name a:hover { text-decoration: underline; }
+  .timing { margin-left: auto; font-size: 14px; color: var(--muted); }
+  .timing.bad { color: var(--down); font-weight: 500; }
+
+  .bars { display: flex; gap: 2px; margin: 14px 0 8px; height: 30px; align-items: stretch; }
+  .bar { flex: 1 1 0; min-width: 0; border-radius: 1px; background: var(--idle); }
+  .bar.ok { background: var(--ok); }
+  .bar.part { background: var(--warn); }
+  .bar.down { background: var(--down); }
+
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 4px 18px;
+    font-size: 13px; color: var(--muted);
+  }
+  .meta b { font-weight: 500; color: var(--ink); }
+  .alert { color: var(--down); }
+  .cert-warn { color: var(--warn); }
+
+  footer { margin-top: 20px; font-size: 13px; color: var(--muted); }
+  .empty { padding: 28px 20px; color: var(--muted); }
+  @media (max-width: 480px) {
+    .bars { height: 24px; }
+    .timing { width: 100%; margin-left: 19px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="verdict">
+    <h1 id="headline">Statuspagina laden</h1>
+    <p id="subhead">Even geduld.</p>
+  </div>
+  <div class="board" id="board"></div>
+  <footer id="footer"></footer>
+</main>
+
+<script>
+const DAYS = 45;
+
+const fmtTime = (iso) => new Date(iso).toLocaleString("nl-NL", {
+  timeZone: "Europe/Amsterdam", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit"
+});
+
+const sinceText = (iso) => {
+  const mins = Math.round((Date.now() - Date.parse(iso)) / 60000);
+  if (mins < 60) return `${mins} min`;
+  if (mins < 1440) return `${Math.round(mins / 60)} uur`;
+  return `${Math.round(mins / 1440)} dagen`;
+};
+
+function dayKeys(n) {
+  const out = [];
+  for (let i = n - 1; i >= 0; i--) {
+    out.push(new Date(Date.now() - i * 86400000).toISOString().slice(0, 10));
+  }
+  return out;
+}
+
+function renderBars(daily) {
+  return dayKeys(DAYS).map((day) => {
+    const d = daily?.[day];
+    if (!d || !d.total) return `<div class="bar" title="${day}: niet gemeten"></div>`;
+    const pct = (d.up / d.total) * 100;
+    const cls = pct === 100 ? "ok" : pct >= 95 ? "part" : "down";
+    return `<div class="bar ${cls}" title="${day}: ${pct.toFixed(1)}% bereikbaar"></div>`;
+  }).join("");
+}
+
+async function load() {
+  let status;
+  try {
+    status = await (await fetch("./status.json?" + Date.now())).json();
+  } catch {
+    document.getElementById("headline").textContent = "Nog geen metingen";
+    document.getElementById("subhead").textContent = "De eerste controle draait binnen een paar minuten. Start hem desnoods handmatig via het tabblad Actions.";
+    document.getElementById("board").innerHTML = '<div class="empty">Zodra de workflow een keer gedraaid heeft, staan je sites hier.</div>';
+    return;
+  }
+
+  const monitors = status.monitors ?? [];
+  const down = monitors.filter((m) => !m.ok);
+  const slow = monitors.filter((m) => m.ok && m.slow);
+  const head = document.getElementById("headline");
+
+  if (down.length) {
+    head.textContent = down.length === 1 ? `${down[0].name} is onbereikbaar` : `${down.length} sites onbereikbaar`;
+    head.style.color = "var(--down)";
+  } else if (slow.length) {
+    head.textContent = "Alles bereikbaar, iets traag";
+  } else {
+    head.textContent = "Alles draait";
+  }
+  document.getElementById("subhead").textContent = `Laatst gecontroleerd ${fmtTime(status.generated)}`;
+
+  const histories = await Promise.all(monitors.map(async (m) => {
+    try { return await (await fetch(`./history/${m.slug}.json?` + Date.now())).json(); }
+    catch { return {}; }
+  }));
+
+  document.getElementById("board").innerHTML = monitors.map((m, i) => {
+    const dot = m.ok ? (m.slow ? "warn" : "ok") : "down";
+    const timing = m.ok
+      ? `${m.ms} ms${m.slow ? " — traag" : ""}`
+      : `${m.reason ?? "onbereikbaar"} — al ${sinceText(m.since)}`;
+    const up = m.uptime ?? {};
+    const cert = m.cert
+      ? (m.cert.daysLeft <= 14
+          ? `<span class="cert-warn">certificaat verloopt over ${m.cert.daysLeft} dagen</span>`
+          : `certificaat nog <b>${m.cert.daysLeft}</b> dagen geldig`)
+      : "";
+    return `
+      <div class="site">
+        <div class="head">
+          <span class="dot ${dot}"></span>
+          <span class="name"><a href="${m.url}" rel="noopener">${m.name}</a></span>
+          <span class="timing ${m.ok ? "" : "bad"}">${timing}</span>
+        </div>
+        <div class="bars">${renderBars(histories[i].daily)}</div>
+        <div class="meta">
+          <span>24 uur <b>${up.d1 ?? "—"}%</b></span>
+          <span>7 dagen <b>${up.d7 ?? "—"}%</b></span>
+          <span>30 dagen <b>${up.d30 ?? "—"}%</b></span>
+          ${cert ? `<span>${cert}</span>` : ""}
+        </div>
+      </div>`;
+  }).join("");
+
+  document.getElementById("footer").textContent =
+    `Elke balk is één dag, oudste links. Controle draait via GitHub Actions, ongeveer elke 5 tot 15 minuten.`;
+}
+
+load();
+setInterval(load, 60000);
+</script>
+</body>
+</html>
