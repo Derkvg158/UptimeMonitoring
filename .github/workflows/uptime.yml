@@ -48,9 +48,10 @@ jobs:
             echo "send=true" >> "$GITHUB_OUTPUT"
             echo "subject=$(head -n 1 alert.txt)" >> "$GITHUB_OUTPUT"
             {
-              echo "body<<EOF"
+              echo "body<<ALERT_EOF"
               tail -n +3 alert.txt
-              echo "EOF"
+              echo ""
+              echo "ALERT_EOF"
             } >> "$GITHUB_OUTPUT"
           fi
 
