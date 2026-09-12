@@ -1,0 +1,73 @@
+{
+  "generated": "2026-09-12T10:29:18.271Z",
+  "monitors": [
+    {
+      "slug": "bpcf",
+      "name": "BPCF",
+      "url": "https://www.bpcf.nl/",
+      "ok": true,
+      "code": 200,
+      "ms": 741,
+      "slow": false,
+      "reason": null,
+      "flaky": false,
+      "since": "2026-09-12T10:29:18.271Z",
+      "checkedAt": "2026-09-12T10:29:18.271Z",
+      "cert": {
+        "validTo": "2026-11-12",
+        "daysLeft": 60,
+        "issuer": "Let's Encrypt"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 100,
+        "d7": 100,
+        "d30": 100
+      }
+    },
+    {
+      "slug": "overlast-van-wespen",
+      "name": "Overlast van wespen",
+      "url": "https://www.overlastvanwespen.nl/",
+      "ok": false,
+      "code": 0,
+      "ms": 281,
+      "slow": false,
+      "reason": "DEPTH_ZERO_SELF_SIGNED_CERT",
+      "flaky": false,
+      "since": "2026-09-12T10:29:18.271Z",
+      "checkedAt": "2026-09-12T10:29:18.271Z",
+      "cert": null,
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 0,
+        "d7": 0,
+        "d30": 0
+      }
+    },
+    {
+      "slug": "je-grote-dag",
+      "name": "Je Grote Dag",
+      "url": "https://www.jegrotedag.nl/",
+      "ok": true,
+      "code": 200,
+      "ms": 821,
+      "slow": false,
+      "reason": null,
+      "flaky": false,
+      "since": "2026-09-12T10:29:18.271Z",
+      "checkedAt": "2026-09-12T10:29:18.271Z",
+      "cert": {
+        "validTo": "2026-10-31",
+        "daysLeft": 49,
+        "issuer": "Let's Encrypt"
+      },
+      "certAlertedOn": null,
+      "uptime": {
+        "d1": 100,
+        "d7": 100,
+        "d30": 100
+      }
+    }
+  ]
+}
