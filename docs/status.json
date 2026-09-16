@@ -1,18 +1,18 @@
 {
-  "generated": "2026-09-16T17:36:19.004Z",
+  "generated": "2026-09-16T20:25:15.181Z",
   "monitors": [
     {
       "slug": "bpcf",
       "name": "BPCF",
       "url": "https://www.bpcf.nl/",
-      "ok": false,
-      "code": 0,
-      "ms": 10036,
+      "ok": true,
+      "code": 200,
+      "ms": 567,
       "slow": false,
-      "reason": "EAI_AGAIN",
-      "flaky": false,
-      "since": "2026-09-16T17:36:19.004Z",
-      "checkedAt": "2026-09-16T17:36:19.004Z",
+      "reason": null,
+      "flaky": true,
+      "since": "2026-09-16T20:25:15.181Z",
+      "checkedAt": "2026-09-16T20:25:15.181Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 56,
@@ -20,9 +20,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 81.82,
-        "d7": 86.67,
-        "d30": 86.67
+        "d1": 83.33,
+        "d7": 87.1,
+        "d30": 87.1
       }
     },
     {
@@ -31,12 +31,12 @@
       "url": "https://www.overlastvanwespen.nl/",
       "ok": false,
       "code": 0,
-      "ms": 10494,
+      "ms": 445,
       "slow": false,
-      "reason": "UND_ERR_CONNECT_TIMEOUT",
+      "reason": "DEPTH_ZERO_SELF_SIGNED_CERT",
       "flaky": false,
       "since": "2026-09-12T10:29:18.271Z",
-      "checkedAt": "2026-09-16T17:36:19.004Z",
+      "checkedAt": "2026-09-16T20:25:15.181Z",
       "cert": null,
       "certAlertedOn": null,
       "uptime": {
@@ -51,12 +51,12 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 10545,
-      "slow": true,
+      "ms": 951,
+      "slow": false,
       "reason": null,
-      "flaky": true,
+      "flaky": false,
       "since": "2026-09-13T00:29:31.785Z",
-      "checkedAt": "2026-09-16T17:36:19.004Z",
+      "checkedAt": "2026-09-16T20:25:15.181Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 89,
@@ -65,8 +65,8 @@
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
-        "d7": 93.33,
-        "d30": 93.33
+        "d7": 93.55,
+        "d30": 93.55
       }
     }
   ]
