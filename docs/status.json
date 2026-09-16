@@ -1,18 +1,18 @@
 {
-  "generated": "2026-09-16T13:04:32.100Z",
+  "generated": "2026-09-16T17:36:19.004Z",
   "monitors": [
     {
       "slug": "bpcf",
       "name": "BPCF",
       "url": "https://www.bpcf.nl/",
-      "ok": true,
-      "code": 200,
-      "ms": 813,
+      "ok": false,
+      "code": 0,
+      "ms": 10036,
       "slow": false,
-      "reason": null,
+      "reason": "EAI_AGAIN",
       "flaky": false,
-      "since": "2026-09-15T15:05:33.828Z",
-      "checkedAt": "2026-09-16T13:04:32.100Z",
+      "since": "2026-09-16T17:36:19.004Z",
+      "checkedAt": "2026-09-16T17:36:19.004Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 56,
@@ -20,9 +20,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 90,
-        "d7": 89.66,
-        "d30": 89.66
+        "d1": 81.82,
+        "d7": 86.67,
+        "d30": 86.67
       }
     },
     {
@@ -31,12 +31,12 @@
       "url": "https://www.overlastvanwespen.nl/",
       "ok": false,
       "code": 0,
-      "ms": 276,
+      "ms": 10494,
       "slow": false,
-      "reason": "DEPTH_ZERO_SELF_SIGNED_CERT",
+      "reason": "UND_ERR_CONNECT_TIMEOUT",
       "flaky": false,
       "since": "2026-09-12T10:29:18.271Z",
-      "checkedAt": "2026-09-16T13:04:32.100Z",
+      "checkedAt": "2026-09-16T17:36:19.004Z",
       "cert": null,
       "certAlertedOn": null,
       "uptime": {
@@ -51,12 +51,12 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 856,
-      "slow": false,
+      "ms": 10545,
+      "slow": true,
       "reason": null,
-      "flaky": false,
+      "flaky": true,
       "since": "2026-09-13T00:29:31.785Z",
-      "checkedAt": "2026-09-16T13:04:32.100Z",
+      "checkedAt": "2026-09-16T17:36:19.004Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 89,
@@ -65,8 +65,8 @@
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
-        "d7": 93.1,
-        "d30": 93.1
+        "d7": 93.33,
+        "d30": 93.33
       }
     }
   ]
