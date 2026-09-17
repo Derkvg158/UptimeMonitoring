@@ -1,28 +1,28 @@
 {
-  "generated": "2026-09-17T01:21:01.463Z",
+  "generated": "2026-09-17T06:13:16.546Z",
   "monitors": [
     {
       "slug": "bpcf",
       "name": "BPCF",
       "url": "https://www.bpcf.nl/",
-      "ok": false,
-      "code": 0,
-      "ms": 254,
+      "ok": true,
+      "code": 200,
+      "ms": 1285,
       "slow": false,
-      "reason": "ETIMEDOUT",
+      "reason": null,
       "flaky": false,
-      "since": "2026-09-17T01:21:01.463Z",
-      "checkedAt": "2026-09-17T01:21:01.463Z",
+      "since": "2026-09-17T06:13:16.546Z",
+      "checkedAt": "2026-09-17T06:13:16.546Z",
       "cert": {
         "validTo": "2026-11-12",
-        "daysLeft": 56,
+        "daysLeft": 55,
         "issuer": "Let's Encrypt"
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 71.43,
-        "d7": 84.85,
-        "d30": 84.85
+        "d1": 75,
+        "d7": 85.29,
+        "d30": 85.29
       }
     },
     {
@@ -31,12 +31,12 @@
       "url": "https://www.overlastvanwespen.nl/",
       "ok": false,
       "code": 0,
-      "ms": 280,
+      "ms": 254,
       "slow": false,
-      "reason": "DEPTH_ZERO_SELF_SIGNED_CERT",
+      "reason": "ETIMEDOUT",
       "flaky": false,
       "since": "2026-09-12T10:29:18.271Z",
-      "checkedAt": "2026-09-17T01:21:01.463Z",
+      "checkedAt": "2026-09-17T06:13:16.546Z",
       "cert": null,
       "certAlertedOn": null,
       "uptime": {
@@ -49,14 +49,14 @@
       "slug": "je-grote-dag",
       "name": "Je Grote Dag",
       "url": "https://www.jegrotedag.nl/",
-      "ok": false,
-      "code": 0,
-      "ms": 253,
+      "ok": true,
+      "code": 200,
+      "ms": 787,
       "slow": false,
-      "reason": "ETIMEDOUT",
+      "reason": null,
       "flaky": false,
-      "since": "2026-09-17T01:21:01.463Z",
-      "checkedAt": "2026-09-17T01:21:01.463Z",
+      "since": "2026-09-17T06:13:16.546Z",
+      "checkedAt": "2026-09-17T06:13:16.546Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 88,
@@ -64,9 +64,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 85.71,
-        "d7": 90.91,
-        "d30": 90.91
+        "d1": 87.5,
+        "d7": 91.18,
+        "d30": 91.18
       }
     }
   ]
