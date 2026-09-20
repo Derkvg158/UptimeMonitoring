@@ -1,18 +1,18 @@
 {
-  "generated": "2026-09-20T18:33:12.569Z",
+  "generated": "2026-09-20T21:01:25.133Z",
   "monitors": [
     {
       "slug": "bpcf",
       "name": "BPCF",
       "url": "https://www.bpcf.nl/",
-      "ok": false,
-      "code": 0,
-      "ms": 253,
+      "ok": true,
+      "code": 200,
+      "ms": 1572,
       "slow": false,
-      "reason": "ETIMEDOUT",
+      "reason": null,
       "flaky": false,
-      "since": "2026-09-20T18:33:12.569Z",
-      "checkedAt": "2026-09-20T18:33:12.569Z",
+      "since": "2026-09-20T21:01:25.133Z",
+      "checkedAt": "2026-09-20T21:01:25.133Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 52,
@@ -20,9 +20,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 92.31,
-        "d7": 90.57,
-        "d30": 88.14
+        "d1": 92.86,
+        "d7": 90.74,
+        "d30": 88.33
       }
     },
     {
@@ -31,12 +31,12 @@
       "url": "https://www.overlastvanwespen.nl/",
       "ok": false,
       "code": 0,
-      "ms": 338,
+      "ms": 254,
       "slow": false,
-      "reason": "DEPTH_ZERO_SELF_SIGNED_CERT",
+      "reason": "ETIMEDOUT",
       "flaky": false,
       "since": "2026-09-12T10:29:18.271Z",
-      "checkedAt": "2026-09-20T18:33:12.569Z",
+      "checkedAt": "2026-09-20T21:01:25.133Z",
       "cert": null,
       "certAlertedOn": null,
       "uptime": {
@@ -49,14 +49,14 @@
       "slug": "je-grote-dag",
       "name": "Je Grote Dag",
       "url": "https://www.jegrotedag.nl/",
-      "ok": false,
-      "code": 0,
-      "ms": 253,
+      "ok": true,
+      "code": 200,
+      "ms": 798,
       "slow": false,
-      "reason": "ETIMEDOUT",
+      "reason": null,
       "flaky": false,
-      "since": "2026-09-20T18:33:12.569Z",
-      "checkedAt": "2026-09-20T18:33:12.569Z",
+      "since": "2026-09-20T21:01:25.133Z",
+      "checkedAt": "2026-09-20T21:01:25.133Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 85,
@@ -64,9 +64,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 92.31,
-        "d7": 94.34,
-        "d30": 91.53
+        "d1": 92.86,
+        "d7": 94.44,
+        "d30": 91.67
       }
     }
   ]
