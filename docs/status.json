@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-21T18:20:45.519Z",
+  "generated": "2026-09-21T22:03:54.168Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -7,12 +7,12 @@
       "url": "https://www.bpcf.nl/",
       "ok": true,
       "code": 200,
-      "ms": 1036,
+      "ms": 785,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-20T21:01:25.133Z",
-      "checkedAt": "2026-09-21T18:20:45.519Z",
+      "checkedAt": "2026-09-21T22:03:54.168Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 51,
@@ -20,9 +20,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 90.91,
-        "d7": 90.2,
-        "d30": 89.23
+        "d1": 91.67,
+        "d7": 90.38,
+        "d30": 89.39
       }
     },
     {
@@ -31,12 +31,12 @@
       "url": "https://www.overlastvanwespen.nl/",
       "ok": false,
       "code": 0,
-      "ms": 406,
+      "ms": 405,
       "slow": false,
       "reason": "DEPTH_ZERO_SELF_SIGNED_CERT",
       "flaky": false,
       "since": "2026-09-12T10:29:18.271Z",
-      "checkedAt": "2026-09-21T18:20:45.519Z",
+      "checkedAt": "2026-09-21T22:03:54.168Z",
       "cert": null,
       "certAlertedOn": null,
       "uptime": {
@@ -51,22 +51,22 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 949,
+      "ms": 704,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-20T21:01:25.133Z",
-      "checkedAt": "2026-09-21T18:20:45.519Z",
+      "checkedAt": "2026-09-21T22:03:54.168Z",
       "cert": {
         "validTo": "2026-12-14",
-        "daysLeft": 84,
+        "daysLeft": 83,
         "issuer": "Let's Encrypt"
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 90.91,
-        "d7": 94.12,
-        "d30": 92.31
+        "d1": 91.67,
+        "d7": 94.23,
+        "d30": 92.42
       }
     }
   ]
