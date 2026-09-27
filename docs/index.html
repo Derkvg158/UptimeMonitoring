@@ -60,6 +60,7 @@
   .dot.ok { background: var(--ok); }
   .dot.down { background: var(--down); }
   .dot.warn { background: var(--warn); }
+  .dot.paused { background: var(--idle); }
   .name { font-weight: 600; }
   .name a { color: inherit; text-decoration: none; }
   .name a:hover { text-decoration: underline; }
@@ -79,6 +80,14 @@
   .meta b { font-weight: 500; color: var(--ink); }
   .alert { color: var(--down); }
   .cert-warn { color: var(--warn); }
+
+  .spark { display: block; width: 100%; height: 34px; margin: 10px 0 4px; }
+  .spark path { fill: none; stroke: var(--muted); stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+  .spark .fail { stroke: var(--down); stroke-width: 2; }
+  details.incidents { margin-top: 8px; font-size: 13px; color: var(--muted); }
+  details.incidents summary { cursor: pointer; }
+  details.incidents ul { margin: 6px 0 0; padding-left: 18px; }
+  details.incidents li { margin: 2px 0; }
 
   footer { margin-top: 20px; font-size: 13px; color: var(--muted); }
   .empty { padding: 28px 20px; color: var(--muted); }
@@ -120,6 +129,43 @@ function dayKeys(n) {
   return out;
 }
 
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+const duration = (ms) => {
+  const mins = Math.max(1, Math.round(ms / 60000));
+  if (mins < 60) return `${mins} min`;
+  if (mins < 1440) return `${Math.floor(mins / 60)} u ${mins % 60} min`;
+  return `${Math.round(mins / 1440)} dagen`;
+};
+
+// Responstijden van de laatste 24 uur als lijntje; rode streepjes zijn mislukte metingen.
+function renderSpark(recent) {
+  const cutoff = Date.now() - 86400000;
+  const pts = (recent ?? []).filter((p) => Date.parse(p.t) >= cutoff);
+  if (pts.length < 2) return "";
+  const W = 300, H = 34;
+  const x = (p) => ((Date.parse(p.t) - cutoff) / 86400000) * W;
+  const okPts = pts.filter((p) => p.ok);
+  const max = Math.max(1000, ...okPts.map((p) => p.ms));
+  const y = (ms) => H - 2 - (ms / max) * (H - 6);
+  const line = okPts.map((p, i) => `${i ? "L" : "M"}${x(p).toFixed(1)},${y(p.ms).toFixed(1)}`).join("");
+  const fails = pts.filter((p) => !p.ok)
+    .map((p) => `<path class="fail" d="M${x(p).toFixed(1)},${H - 8}V${H}"><title>${esc(fmtTime(p.t))}: ${esc(p.r ?? "mislukt")}</title></path>`).join("");
+  const avg = okPts.length ? Math.round(okPts.reduce((a, p) => a + p.ms, 0) / okPts.length) : null;
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Responstijd laatste 24 uur${avg ? `, gemiddeld ${avg} ms` : ""}"><path d="${line}"/>${fails}</svg>`;
+}
+
+function renderIncidents(incidents) {
+  const list = (incidents ?? []).slice(-5).reverse();
+  if (!list.length) return "";
+  const items = list.map((i) => {
+    const end = i.end ? Date.parse(i.end) : Date.now();
+    const state = i.end ? duration(end - Date.parse(i.start)) : `loopt nog, ${duration(end - Date.parse(i.start))}`;
+    return `<li>${esc(fmtTime(i.start))} — ${esc(state)} — ${esc(i.reason)}</li>`;
+  }).join("");
+  return `<details class="incidents"><summary>Laatste storingen</summary><ul>${items}</ul></details>`;
+}
+
 function renderBars(daily) {
   return dayKeys(DAYS).map((day) => {
     const d = daily?.[day];
@@ -141,9 +187,10 @@ async function load() {
     return;
   }
 
+  if (status.title) document.title = status.title;
   const monitors = status.monitors ?? [];
-  const down = monitors.filter((m) => !m.ok);
-  const slow = monitors.filter((m) => m.ok && m.slow);
+  const down = monitors.filter((m) => !m.ok && !m.paused);
+  const slow = monitors.filter((m) => m.ok && m.slow && !m.paused);
   const head = document.getElementById("headline");
 
   if (down.length) {
@@ -162,10 +209,12 @@ async function load() {
   }));
 
   document.getElementById("board").innerHTML = monitors.map((m, i) => {
-    const dot = m.ok ? (m.slow ? "warn" : "ok") : "down";
-    const timing = m.ok
-      ? `${m.ms} ms${m.slow ? " — traag" : ""}`
-      : `${m.reason ?? "onbereikbaar"} — al ${sinceText(m.since)}`;
+    const dot = m.paused ? "paused" : m.ok ? (m.slow ? "warn" : "ok") : "down";
+    const timing = m.paused
+      ? "gepauzeerd"
+      : m.ok
+        ? `${m.ms} ms${m.slow ? " — traag" : ""}`
+        : `${esc(m.reason ?? "onbereikbaar")} — al ${sinceText(m.since)}`;
     const up = m.uptime ?? {};
     const cert = m.cert
       ? (m.cert.daysLeft <= 14
@@ -176,21 +225,23 @@ async function load() {
       <div class="site">
         <div class="head">
           <span class="dot ${dot}"></span>
-          <span class="name"><a href="${m.url}" rel="noopener">${m.name}</a></span>
-          <span class="timing ${m.ok ? "" : "bad"}">${timing}</span>
+          <span class="name"><a href="${esc(m.url)}" rel="noopener">${esc(m.name)}</a></span>
+          <span class="timing ${m.ok || m.paused ? "" : "bad"}">${timing}</span>
         </div>
         <div class="bars">${renderBars(histories[i].daily)}</div>
+        ${renderSpark(histories[i].recent)}
         <div class="meta">
           <span>24 uur <b>${up.d1 ?? "—"}%</b></span>
           <span>7 dagen <b>${up.d7 ?? "—"}%</b></span>
           <span>30 dagen <b>${up.d30 ?? "—"}%</b></span>
           ${cert ? `<span>${cert}</span>` : ""}
         </div>
+        ${renderIncidents(histories[i].incidents)}
       </div>`;
   }).join("");
 
   document.getElementById("footer").textContent =
-    `Elke balk is één dag, oudste links. Controle draait via GitHub Actions, ongeveer elke 5 tot 15 minuten.`;
+    `Elke balk is één dag, oudste links. Het lijntje is de responstijd van de laatste 24 uur, rode streepjes zijn mislukte metingen. Controle draait via GitHub Actions, elke 5 minuten.`;
 }
 
 load();

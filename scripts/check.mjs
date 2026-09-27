@@ -1,7 +1,7 @@
 // Uptime checker — draait in GitHub Actions, schrijft resultaten naar docs/
 // Geen npm-dependencies: alles met ingebouwde Node-modules.
 
-import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { readFile, writeFile, mkdir, rename } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import tls from "node:tls";
 
@@ -16,6 +16,9 @@ const SLOW_MS = 3000;        // boven deze responstijd: "traag", geen storing
 const CERT_WARN_DAYS = 14;   // waarschuwen als SSL-certificaat hierbinnen verloopt
 const RECENT_KEEP = 288;     // ruwe metingen die we bewaren (~24u bij 5 min)
 const DAILY_KEEP = 90;       // dagtotalen die we bewaren
+const INCIDENTS_KEEP = 50;   // afgesloten en lopende storingen die we bewaren
+const CONFIRM_ROUNDS = 2;    // pas melden als een site zoveel rondes achter elkaar faalt
+const RETRY_DELAYS = [8000, 20000]; // wachttijd vóór de 2e en 3e poging binnen één ronde
 
 const readJson = async (path, fallback) => {
   if (!existsSync(path)) return fallback;
@@ -26,10 +29,37 @@ const readJson = async (path, fallback) => {
   }
 };
 
+// Eerst naar een tijdelijk bestand, dan hernoemen: breekt het script halverwege
+// af, dan blijft het oude bestand heel in plaats van leeg.
+const writeAtomic = async (path, data) => {
+  await writeFile(`${path}.tmp`, data);
+  await rename(`${path}.tmp`, path);
+};
+
 const slugify = (s) =>
   s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const today = () => new Date().toISOString().slice(0, 10);
+
+// Technische foutcodes omzetten naar iets wat je zonder opzoeken begrijpt.
+const ERROR_TEXT = {
+  ENOTFOUND: "domein niet gevonden (DNS)",
+  EAI_AGAIN: "DNS reageert niet",
+  ECONNREFUSED: "server weigert de verbinding",
+  ECONNRESET: "verbinding verbroken door de server",
+  ETIMEDOUT: "verbinding verloopt",
+  EHOSTUNREACH: "server onbereikbaar",
+  ENETUNREACH: "netwerk onbereikbaar",
+  UND_ERR_CONNECT_TIMEOUT: "verbinding maken duurt te lang",
+  UND_ERR_SOCKET: "verbinding onverwacht gesloten",
+  CERT_HAS_EXPIRED: "SSL-certificaat verlopen",
+  DEPTH_ZERO_SELF_SIGNED_CERT: "SSL-certificaat ongeldig (zelf ondertekend)",
+  SELF_SIGNED_CERT_IN_CHAIN: "SSL-certificaat ongeldig (zelf ondertekend)",
+  ERR_TLS_CERT_ALTNAME_INVALID: "SSL-certificaat hoort bij een ander domein",
+  UNABLE_TO_VERIFY_LEAF_SIGNATURE: "SSL-certificaatketen onvolledig",
+};
+
+const explain = (code) => (ERROR_TEXT[code] ? `${ERROR_TEXT[code]} (${code})` : code);
 
 // --- één site checken -------------------------------------------------------
 
@@ -71,19 +101,24 @@ async function probe(monitor) {
     return { ok: true, code, ms, reason: null };
   } catch (err) {
     const ms = Date.now() - started;
-    const name = err?.name === "TimeoutError" ? `geen antwoord binnen ${timeout / 1000}s` : (err?.cause?.code || err?.message || "netwerkfout");
+    const name = err?.name === "TimeoutError"
+      ? `geen antwoord binnen ${timeout / 1000}s`
+      : explain(err?.cause?.code || err?.message || "netwerkfout");
     return { ok: false, code: 0, ms, reason: String(name) };
   }
 }
 
-// Eén keer opnieuw proberen voordat we "down" roepen — scheelt loze meldingen
-// bij een hikje in het netwerk of een herstartende server.
+// Een paar keer opnieuw proberen voordat we een ronde als mislukt tellen —
+// scheelt loze meldingen bij een hikje in het netwerk of een herstartende server.
 async function check(monitor) {
-  const first = await probe(monitor);
-  if (first.ok) return first;
-  await new Promise((r) => setTimeout(r, 8000));
-  const second = await probe(monitor);
-  return second.ok ? { ...second, flaky: true } : second;
+  let result = await probe(monitor);
+  for (const delay of RETRY_DELAYS) {
+    if (result.ok) return result;
+    await new Promise((r) => setTimeout(r, delay));
+    const next = await probe(monitor);
+    result = next.ok ? { ...next, flaky: true } : next;
+  }
+  return result;
 }
 
 // --- SSL-certificaat ---------------------------------------------------------
@@ -117,7 +152,9 @@ function certificateInfo(url) {
 // --- geschiedenis ------------------------------------------------------------
 
 function updateHistory(history, result, now) {
-  const recent = [...(history.recent ?? []), { t: now, ok: result.ok ? 1 : 0, ms: result.ms, code: result.code }];
+  const point = { t: now, ok: result.ok ? 1 : 0, ms: result.ms, code: result.code };
+  if (!result.ok) point.r = result.reason;
+  const recent = [...(history.recent ?? []), point];
   const daily = { ...(history.daily ?? {}) };
   const day = today();
   const entry = daily[day] ?? { up: 0, total: 0, msSum: 0 };
@@ -128,7 +165,27 @@ function updateHistory(history, result, now) {
   const days = Object.keys(daily).sort();
   for (const d of days.slice(0, Math.max(0, days.length - DAILY_KEEP))) delete daily[d];
 
-  return { recent: recent.slice(-RECENT_KEEP), daily };
+  return { recent: recent.slice(-RECENT_KEEP), daily, incidents: history.incidents ?? [] };
+}
+
+// Storingslog: één regel per bevestigde storing, met begin, einde en oorzaak.
+function openIncident(history, start, reason) {
+  if (history.incidents.some((i) => i.end === null)) return;
+  history.incidents = [...history.incidents, { start, end: null, reason }].slice(-INCIDENTS_KEEP);
+}
+
+function closeIncident(history, end) {
+  const open = history.incidents.findLast((i) => i.end === null);
+  if (open) open.end = end;
+}
+
+// Uptime over de laatste 24 uur rekenen we uit de losse metingen; de dagtotalen
+// zouden hier ook gisteren (en dus tot 48 uur) meetellen.
+function uptimeRecent(recent, hours) {
+  const cutoff = Date.now() - hours * 3600000;
+  const points = recent.filter((p) => Date.parse(p.t) >= cutoff);
+  if (!points.length) return null;
+  return Math.round((points.filter((p) => p.ok).length / points.length) * 10000) / 100;
 }
 
 function uptimePct(daily, days) {
@@ -171,26 +228,43 @@ const monitors = [];
 for (const monitor of config.monitors) {
   const slug = monitor.slug ?? slugify(monitor.name ?? monitor.url);
   const prev = prevBySlug[slug] ?? {};
+
+  // Onderhoud: site overslaan, geen metingen en geen meldingen.
+  if (monitor.paused) {
+    monitors.push({ ...prev, slug, name: monitor.name, url: monitor.url, paused: true });
+    console.log(`PAUZE ${monitor.name}`);
+    continue;
+  }
+
   const result = await check(monitor);
 
   const cert = result.ok ? await certificateInfo(monitor.url) : (prev.cert ?? null);
 
   const historyPath = `${HISTORY_DIR}/${slug}.json`;
   const history = updateHistory(await readJson(historyPath, {}), result, now);
-  await writeFile(historyPath, JSON.stringify(history));
 
   const changed = prev.ok !== result.ok;
   const since = changed || prev.since === undefined ? now : prev.since;
 
-  // Down melden bij een nieuwe storing én bij de allereerste meting als het
-  // meteen mis is. "Weer online" alleen na een echte storing.
-  if (!result.ok && prev.ok !== false) {
+  // Pas een storing melden als hij meerdere rondes achter elkaar aanhoudt.
+  // "Weer bereikbaar" alleen als er eerder ook echt een storing gemeld is.
+  const confirmRounds = monitor.confirmRounds ?? config.confirmRounds ?? CONFIRM_ROUNDS;
+  const failCount = result.ok ? 0 : (prev.failCount ?? 0) + 1;
+  // Oudere status.json kent `alerted` nog niet: een site die toen al plat lag,
+  // is toen ook al gemeld.
+  let alerted = result.ok ? false : (prev.alerted ?? prev.ok === false);
+
+  if (!result.ok && !alerted && failCount >= confirmRounds) {
+    alerted = true;
+    openIncident(history, since, result.reason);
     events.push({ level: "down", name: monitor.name, url: monitor.url, text: `${monitor.name} is onbereikbaar — ${result.reason}` });
   }
-  if (result.ok && prev.ok === false) {
+  if (result.ok && (prev.alerted ?? prev.ok === false)) {
+    closeIncident(history, now);
     const minutes = prev.since ? Math.round((Date.parse(now) - Date.parse(prev.since)) / 60000) : null;
     events.push({ level: "up", name: monitor.name, url: monitor.url, text: `${monitor.name} is weer bereikbaar${minutes !== null ? ` (${minutes} min offline)` : ""}` });
   }
+  await writeAtomic(historyPath, JSON.stringify(history));
 
   // Certificaatwaarschuwing: hooguit één keer per dag per site.
   let certAlertedOn = prev.certAlertedOn ?? null;
@@ -210,17 +284,19 @@ for (const monitor of config.monitors) {
     reason: result.reason,
     flaky: result.flaky ?? false,
     since,
+    failCount,
+    alerted,
     checkedAt: now,
     cert,
     certAlertedOn,
-    uptime: { d1: uptimePct(history.daily, 1), d7: uptimePct(history.daily, 7), d30: uptimePct(history.daily, 30) },
+    uptime: { d1: uptimeRecent(history.recent, 24), d7: uptimePct(history.daily, 7), d30: uptimePct(history.daily, 30) },
   });
 
   console.log(`${result.ok ? "OK  " : "DOWN"} ${monitor.name} — ${result.code || "-"} in ${result.ms}ms${result.reason ? ` (${result.reason})` : ""}`);
 }
 
-const down = monitors.filter((m) => !m.ok);
-await writeFile(STATUS, JSON.stringify({ generated: now, monitors }, null, 2));
+const down = monitors.filter((m) => !m.ok && !m.paused);
+await writeAtomic(STATUS, JSON.stringify({ title: config.title ?? null, generated: now, monitors }, null, 2));
 
 if (events.length) {
   const icon = { down: "🔴", up: "🟢", cert: "🟠" };

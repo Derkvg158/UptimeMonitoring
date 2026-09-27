@@ -12,9 +12,19 @@ Wat er per site gecontroleerd wordt:
   je een WordPress- of Concrete-site die "draait" maar een Fatal error toont
 - hoe lang het SSL-certificaat nog geldig is, met een waarschuwing vanaf 14 dagen
 
-Een site wordt pas als storing gemeld na twee mislukte pogingen met 8 seconden
-ertussen. Meldingen komen alleen bij een *verandering*: één bericht als de site
-omvalt, één als hij terug is. Geen herhaling elke ronde.
+Elke 5 minuten is er een controleronde. Binnen een ronde krijgt een site drie
+pogingen (na 8 en na 20 seconden opnieuw). Pas als hij **twee rondes achter
+elkaar** faalt, komt er een melding — een kort hikje van de server of van
+GitHub's netwerk levert dus geen loos alarm meer op. Meldingen komen alleen bij
+een *verandering*: één bericht als de site omvalt, één als hij terug is.
+
+Op de statuspagina zie je per site:
+
+- een balk per dag (45 dagen) en het uptimepercentage over 24 uur, 7 en 30 dagen
+- een lijntje met de responstijd van de laatste 24 uur, met rode streepjes op
+  mislukte metingen (beweeg eroverheen voor de oorzaak)
+- de laatste vijf storingen met begin, duur en oorzaak, in gewone taal
+  ("SSL-certificaat ongeldig", "domein niet gevonden") in plaats van foutcodes
 
 ## Opzetten
 
@@ -47,6 +57,15 @@ draait) en voeg de rest toe:
 `mustContain` is nuttig om te bewaken dat een belangrijk element nog bestaat,
 bijvoorbeeld je contactformulier of offerteknop. Laat weg wat je niet nodig hebt.
 
+Nog een paar opties per site:
+
+| Optie | Wat het doet |
+|---|---|
+| `"paused": true` | Site tijdelijk overslaan, bijvoorbeeld tijdens onderhoud of een verhuizing. Geen metingen, geen meldingen. |
+| `"confirmRounds": 1` | Meteen melden bij de eerste mislukte ronde in plaats van na twee. Kan ook bovenin `monitors.json` voor alle sites tegelijk. |
+| `"expectStatus": [200, 299]` | Welke HTTP-statuscodes als goed tellen (standaard 200 t/m 399). |
+| `"timeoutMs": 20000` | Hoe lang op een antwoord wachten (standaard 15 seconden). |
+
 **3. Statuspagina aanzetten**
 
 Settings → Pages → Source: *Deploy from a branch*, branch `main`, map `/docs`.
@@ -75,7 +94,10 @@ Voeg deze secrets toe met de SMTP-gegevens van je eigen mailhosting:
 | `MAIL_PORT` | `465` |
 | `MAIL_USER` | `monitor@bpcf.nl` |
 | `MAIL_PASS` | wachtwoord van dat mailadres |
-| `MAIL_TO` | `info@bpcf.nl` |
+| `MAIL_TO` | `info@bpcf.nl` (meerdere adressen scheiden met een komma) |
+
+Poort 465 gebruikt SSL, elke andere poort (meestal 587) STARTTLS. De mail gaat
+rechtstreeks via `curl` de deur uit, er is geen extra action voor nodig.
 
 Gebruik bij voorkeur een apart mailadres, geen adres waar je zelf op werkt.
 Bij Gmail werkt dit alleen met een app-wachtwoord, niet met je gewone wachtwoord.
@@ -87,26 +109,33 @@ nul configuratie.
 
 **6. Proefdraaien**
 
-Tabblad Actions → *Uptime check* → *Run workflow*. De eerste run maakt
-`docs/status.json` aan en vult de statuspagina.
+Tabblad Actions → *Uptime check* → *Run workflow*. Laat "duur" op 0 voor één
+controleronde. De eerste run maakt `docs/status.json` aan en vult de
+statuspagina.
+
+Loopt er al een geplande run, dan wacht je handmatige run tot die klaar is
+(hooguit een paar uur). Wil je direct zien wat er gebeurt: open de lopende run
+onder Actions, daar staat elke ronde in het log.
 
 ## Waar je rekening mee moet houden
 
-**De interval is niet strak.** De cron staat op elke 5 minuten, maar GitHub voert
-geplande workflows uit wanneer er capaciteit is. In de praktijk is dat elke 5 tot
-15 minuten, soms trager op drukke momenten. Voor "is mijn site vannacht een uur
-plat geweest" is dat prima. Heb je alarm binnen een minuut nodig, dan is een
-betaalde dienst de juiste keuze.
+**Hoe de 5 minuten gehaald worden.** GitHub start geplande workflows wanneer er
+capaciteit is; bij deze repository kwam dat neer op één run per 2 tot 5 uur.
+Daarom start de workflow nu elk uur en blijft elke run zelf 5,5 uur lang
+doorlopen met een ronde per 5 minuten. Zodra een run klaar is, staat de
+volgende al in de wachtrij, dus er zit hooguit een kort gat tussen. Op een
+publieke repository kost dat niets. Heb je alarm binnen een minuut nodig, dan
+is een betaalde dienst de juiste keuze.
 
 **Geplande workflows vallen stil bij een slapende repository.** GitHub schakelt de
 cron uit na 60 dagen zonder activiteit. Deze monitor commit elke run zijn
 resultaten, wat als activiteit telt, maar GitHub stuurt je sowieso een mail
 voordat hij iets uitzet — één klik en hij loopt weer.
 
-**Elke run maakt een commit.** Bij 5 minuten zijn dat een paar duizend commits per
-maand. Dat is normaal voor dit soort monitors en kost je niets, maar je
-commitgeschiedenis wordt er wel onleesbaar van. Zet de cron op `*/15` als je dat
-storend vindt.
+**Elke ronde maakt een commit.** Bij 5 minuten zijn dat een paar duizend commits
+per maand. Dat is normaal voor dit soort monitors en kost je niets, maar je
+commitgeschiedenis wordt er wel onleesbaar van. Zet `INTERVAL_SECONDS` in
+`.github/workflows/uptime.yml` op `900` als je liever elke 15 minuten meet.
 
 **Het controleert bereikbaarheid, niet correctheid.** Een site die een verkeerd
 telefoonnummer toont of waarvan het contactformulier geen mail verstuurt, ziet
