@@ -66,10 +66,23 @@ Nog een paar opties per site:
 | `"expectStatus": [200, 299]` | Welke HTTP-statuscodes als goed tellen (standaard 200 t/m 399). |
 | `"timeoutMs": 20000` | Hoe lang op een antwoord wachten (standaard 15 seconden). |
 
+Na het opzetten hoef je dit bestand niet meer met de hand aan te passen: gebruik
+daarvoor de beheerpagina (zie hieronder).
+
 **3. Statuspagina aanzetten**
 
 Settings → Pages → Source: *Deploy from a branch*, branch `main`, map `/docs`.
 Na een minuut staat je overzicht op `https://<gebruikersnaam>.github.io/uptime/`.
+
+**Beheerpagina.** Op `https://<gebruikersnaam>.github.io/uptime/beheer.html`
+voeg je sites toe, pas je ze aan, pauzeer je ze of haal je ze weg. Elke
+wijziging wordt een commit op `monitors.json` en is binnen 5 minuten actief.
+
+Inloggen gaat met een GitHub-token dat alleen in je eigen browser bewaard wordt:
+Settings → Developer settings → Personal access tokens → *Fine-grained tokens*,
+alleen deze repository, en onder Repository permissions *Contents: Read and
+write*. Zonder zo'n token kan niemand iets aanpassen, ook al is de pagina
+openbaar.
 
 **4. Telegram-meldingen**
 

@@ -37,7 +37,7 @@ const writeAtomic = async (path, data) => {
 };
 
 const slugify = (s) =>
-  s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
 const today = () => new Date().toISOString().slice(0, 10);
 

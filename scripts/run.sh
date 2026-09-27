@@ -14,7 +14,11 @@ git config user.email "uptime-bot@users.noreply.github.com"
 
 commit_results() {
   git add docs/
-  git diff --quiet --staged && return 0
+  if git diff --quiet --staged; then
+    # Niets te committen, maar wel wijzigingen van de beheerpagina ophalen.
+    git pull -q --rebase || true
+    return 0
+  fi
   git commit -q -m "status $(date -u +'%Y-%m-%d %H:%M')"
   for attempt in 1 2 3; do
     git pull -q --rebase -X theirs && git push -q && return 0
