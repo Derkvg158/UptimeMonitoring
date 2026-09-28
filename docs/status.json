@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-09-28T03:11:37.985Z",
+  "generated": "2026-09-28T03:16:37.805Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -8,14 +8,14 @@
       "url": "https://www.bpcf.nl/",
       "ok": true,
       "code": 200,
-      "ms": 732,
+      "ms": 842,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-26T18:34:57.069Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-09-28T03:11:37.985Z",
+      "checkedAt": "2026-09-28T03:16:37.805Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 45,
@@ -24,8 +24,8 @@
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
-        "d7": 98.59,
-        "d30": 95.57
+        "d7": 98.6,
+        "d30": 95.59
       }
     },
     {
@@ -34,14 +34,14 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 726,
+      "ms": 573,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-26T18:34:57.069Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-09-28T03:11:37.985Z",
+      "checkedAt": "2026-09-28T03:16:37.805Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 77,
@@ -50,8 +50,8 @@
       "certAlertedOn": null,
       "uptime": {
         "d1": 100,
-        "d7": 98.59,
-        "d30": 96.55
+        "d7": 98.6,
+        "d30": 96.57
       }
     },
     {
@@ -67,7 +67,7 @@
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-09-28T03:11:37.985Z",
+      "checkedAt": "2026-09-28T03:16:37.805Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 88,
