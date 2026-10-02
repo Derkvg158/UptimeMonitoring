@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-02T17:30:57.833Z",
+  "generated": "2026-10-02T17:35:57.878Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -15,7 +15,7 @@
       "since": "2026-09-26T18:34:57.069Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-02T17:30:57.833Z",
+      "checkedAt": "2026-10-02T17:35:57.878Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 40,
@@ -25,7 +25,7 @@
       "uptime": {
         "d1": 100,
         "d7": 99.9,
-        "d30": 99.2
+        "d30": 99.21
       }
     },
     {
@@ -34,14 +34,14 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": true,
       "code": 200,
-      "ms": 1120,
+      "ms": 437,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-26T18:34:57.069Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-02T17:30:57.833Z",
+      "checkedAt": "2026-10-02T17:35:57.878Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 73,
@@ -60,14 +60,14 @@
       "url": "https://sintenpietinhuren.nl/",
       "ok": true,
       "code": 200,
-      "ms": 228,
+      "ms": 837,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-02T17:30:57.833Z",
+      "checkedAt": "2026-10-02T17:35:57.878Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 84,
