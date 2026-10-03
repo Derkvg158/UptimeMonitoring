@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-03T08:31:49.414Z",
+  "generated": "2026-10-03T08:36:49.544Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -8,14 +8,14 @@
       "url": "https://www.bpcf.nl/",
       "ok": false,
       "code": 0,
-      "ms": 353,
+      "ms": 254,
       "slow": false,
       "reason": "verbinding verloopt (ETIMEDOUT)",
       "flaky": false,
       "since": "2026-10-03T08:01:49.830Z",
-      "failCount": 7,
+      "failCount": 8,
       "alerted": true,
-      "checkedAt": "2026-10-03T08:31:49.414Z",
+      "checkedAt": "2026-10-03T08:36:49.544Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 39,
@@ -23,9 +23,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 96.8,
-        "d7": 99.32,
-        "d30": 98.73
+        "d1": 96.35,
+        "d7": 99.23,
+        "d30": 98.66
       }
     },
     {
@@ -39,9 +39,9 @@
       "reason": "verbinding verloopt (ETIMEDOUT)",
       "flaky": false,
       "since": "2026-10-03T08:01:49.830Z",
-      "failCount": 7,
+      "failCount": 8,
       "alerted": true,
-      "checkedAt": "2026-10-03T08:31:49.414Z",
+      "checkedAt": "2026-10-03T08:36:49.544Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 72,
@@ -49,9 +49,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 96.8,
-        "d7": 99.32,
-        "d30": 98.89
+        "d1": 96.35,
+        "d7": 99.23,
+        "d30": 98.81
       }
     },
     {
@@ -67,7 +67,7 @@
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-03T08:31:49.414Z",
+      "checkedAt": "2026-10-03T08:36:49.544Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 83,
