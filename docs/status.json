@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-03T10:51:50.729Z",
+  "generated": "2026-10-03T10:56:50.173Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -13,9 +13,9 @@
       "reason": "verbinding verloopt (ETIMEDOUT)",
       "flaky": false,
       "since": "2026-10-03T08:01:49.830Z",
-      "failCount": 35,
+      "failCount": 36,
       "alerted": true,
-      "checkedAt": "2026-10-03T10:51:50.729Z",
+      "checkedAt": "2026-10-03T10:56:50.173Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 39,
@@ -23,9 +23,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 84.02,
-        "d7": 97,
-        "d30": 96.59
+        "d1": 83.56,
+        "d7": 96.92,
+        "d30": 96.52
       }
     },
     {
@@ -39,9 +39,9 @@
       "reason": "verbinding verloopt (ETIMEDOUT)",
       "flaky": false,
       "since": "2026-10-03T08:01:49.830Z",
-      "failCount": 35,
+      "failCount": 36,
       "alerted": true,
-      "checkedAt": "2026-10-03T10:51:50.729Z",
+      "checkedAt": "2026-10-03T10:56:50.173Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 72,
@@ -49,9 +49,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 84.02,
-        "d7": 97,
-        "d30": 96.75
+        "d1": 83.56,
+        "d7": 96.92,
+        "d30": 96.67
       }
     },
     {
@@ -60,14 +60,14 @@
       "url": "https://sintenpietinhuren.nl/",
       "ok": true,
       "code": 200,
-      "ms": 207,
+      "ms": 751,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-03T10:51:50.729Z",
+      "checkedAt": "2026-10-03T10:56:50.173Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 83,
