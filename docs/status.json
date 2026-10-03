@@ -1,6 +1,6 @@
 {
   "title": "Statusoverzicht",
-  "generated": "2026-10-03T10:26:50.622Z",
+  "generated": "2026-10-03T10:31:50.466Z",
   "monitors": [
     {
       "slug": "bpcf",
@@ -8,14 +8,14 @@
       "url": "https://www.bpcf.nl/",
       "ok": false,
       "code": 0,
-      "ms": 253,
+      "ms": 799,
       "slow": false,
       "reason": "verbinding verloopt (ETIMEDOUT)",
       "flaky": false,
       "since": "2026-10-03T08:01:49.830Z",
-      "failCount": 30,
+      "failCount": 31,
       "alerted": true,
-      "checkedAt": "2026-10-03T10:26:50.622Z",
+      "checkedAt": "2026-10-03T10:31:50.466Z",
       "cert": {
         "validTo": "2026-11-12",
         "daysLeft": 39,
@@ -23,9 +23,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 86.3,
-        "d7": 97.41,
-        "d30": 96.97
+        "d1": 85.84,
+        "d7": 97.33,
+        "d30": 96.89
       }
     },
     {
@@ -34,14 +34,14 @@
       "url": "https://www.jegrotedag.nl/",
       "ok": false,
       "code": 0,
-      "ms": 254,
+      "ms": 464,
       "slow": false,
       "reason": "verbinding verloopt (ETIMEDOUT)",
       "flaky": false,
       "since": "2026-10-03T08:01:49.830Z",
-      "failCount": 30,
+      "failCount": 31,
       "alerted": true,
-      "checkedAt": "2026-10-03T10:26:50.622Z",
+      "checkedAt": "2026-10-03T10:31:50.466Z",
       "cert": {
         "validTo": "2026-12-14",
         "daysLeft": 72,
@@ -49,9 +49,9 @@
       },
       "certAlertedOn": null,
       "uptime": {
-        "d1": 86.3,
-        "d7": 97.41,
-        "d30": 97.13
+        "d1": 85.84,
+        "d7": 97.33,
+        "d30": 97.05
       }
     },
     {
@@ -60,14 +60,14 @@
       "url": "https://sintenpietinhuren.nl/",
       "ok": true,
       "code": 200,
-      "ms": 564,
+      "ms": 152,
       "slow": false,
       "reason": null,
       "flaky": false,
       "since": "2026-09-27T16:46:17.392Z",
       "failCount": 0,
       "alerted": false,
-      "checkedAt": "2026-10-03T10:26:50.622Z",
+      "checkedAt": "2026-10-03T10:31:50.466Z",
       "cert": {
         "validTo": "2026-12-25",
         "daysLeft": 83,
